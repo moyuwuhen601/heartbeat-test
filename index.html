@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心跳测试</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin-top: 50px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #bpm {
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>心跳测试</h1>
+    <p>点击鼠标 或 按下 <b>空格键</b> 记录心跳</p>
+    <button id="heartbeatBtn">点我记录心跳</button>
+    <button id="resetBtn">重置</button> <!-- 🔄 新增重置按钮 -->
+    <p>已记录心跳次数：<span id="count">0</span></p>
+    <p id="timer">倒计时：60 秒</p>
+    <p>你的心率（BPM）：<span id="bpm">--</span></p>
+    <p style="color: red;">仅供娱乐测试，如遇不适请及时线下就医</p>
+
+    <script>
+        let count = 0;       // 记录心跳次数
+        let startTime = null; // 计时器开始时间
+        let timer = 60;      // 倒计时秒数
+        let interval;        // 定时器
+
+        function recordHeartbeat() {
+            if (!startTime) {
+                startTime = Date.now(); // 记录开始时间
+                interval = setInterval(updateTimer, 1000); // 启动倒计时
+            }
+            count++;
+            document.getElementById("count").innerText = count;
+        }
+
+        function updateTimer() {
+            if (timer > 0) {
+                timer--;
+                document.getElementById("timer").innerText = `倒计时：${timer} 秒`;
+            } else {
+                clearInterval(interval);
+                let bpm = Math.round((count / 60) * 60); // 计算 BPM
+                document.getElementById("bpm").innerText = bpm;
+                document.getElementById("heartbeatBtn").disabled = true; // 禁用按钮
+            }
+        }
+
+        function resetTest() {
+            clearInterval(interval);
+            count = 0;
+            startTime = null;
+            timer = 60;
+            document.getElementById("count").innerText = count;
+            document.getElementById("timer").innerText = `倒计时：60 秒`;
+            document.getElementById("bpm").innerText = "--";
+            document.getElementById("heartbeatBtn").disabled = false;
+        }
+
+        // 监听鼠标点击
+        document.getElementById("heartbeatBtn").addEventListener("click", recordHeartbeat);
+
+        // 监听键盘空格键
+        document.addEventListener("keydown", function(event) {
+            if (event.code === "Space") {
+                event.preventDefault(); // 防止页面滚动
+                recordHeartbeat();
+            }
+        });
+
+        // 监听重置按钮
+        document.getElementById("resetBtn").addEventListener("click", resetTest);
+
+    </script>
+
+</body>
+</html>
